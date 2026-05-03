@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projekt č.p. 381 Třebechovice — Řízení projektu</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f1eb;
+    --surface: #ffffff;
+    --surface2: #f9f7f3;
+    --border: #d8d2c8;
+    --border-strong: #a89f94;
+    --text: #1a1814;
+    --text-muted: #7a7268;
+    --accent: #2c5f8a;
+    --accent-light: #e8f0f7;
+    --warn: #b05c1a;
+    --warn-light: #fdf0e6;
+    --ok: #2a7a4a;
+    --ok-light: #e8f5ed;
+    --danger: #8a2c2c;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: #f0eee8;
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  /* HEADER */
+  .header {
+    background: #ffffff;
+    color: var(--text);
+    padding: 18px 20px 14px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    border-bottom: 2px solid var(--border);
+  }
+  .header-left { flex: 1; }
+  .header-tag {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+  }
+  .header-title {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.25;
+    color: var(--text);
+  }
+  .header-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    font-family: var(--mono);
+  }
+  .header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-start;
+    padding-top: 2px;
+  }
+  .header-meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    border-collapse: collapse;
+  }
+  .meta-label {
+    text-align: right;
+    padding: 1px 6px 1px 0;
+    color: var(--text-muted);
+    white-space: nowrap;
+    vertical-align: top;
+  }
+  .meta-label::after { content: ':'; }
+  .meta-value {
+    text-align: left;
+    padding: 1px 0 1px 0;
+    color: var(--text);
+    white-space: nowrap;
+    vertical-align: top;
+  }
+
+  /* TOOLBAR */
+  .toolbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .toolbar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .toolbar-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    width: 52px;
+    flex-shrink: 0;
+  }
+  .btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    transition: all .15s;
+    letter-spacing: .5px;
+  }
+  .btn:hover { background: var(--surface2); border-color: var(--border-strong); }
+  .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn-primary:hover { background: #245179; border-color: #245179; }
+  .btn-ok { background: var(--ok); color: #fff; border-color: var(--ok); }
+  .btn-ok:hover { background: #226040; }
+
+  .separator { width: 1px; height: 28px; background: var(--border); margin: 0 4px; }
+
+  .filter-btns { display: flex; gap: 6px; }
+  .filter-btn {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all .15s;
+    letter-spacing: .5px;
+  }
+  .filter-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+  /* PROGRESS BAR */
+  .progress-bar-wrap {
+    background: var(--surface);
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .progress-stats {
+    display: flex;
+    gap: 24px;
+    font-family: var(--mono);
+    font-size: 11px;
+  }
+  .stat { display: flex; flex-direction: column; gap: 2px; }
+  .stat-val { font-size: 22px; font-weight: 600; color: var(--text); line-height: 1; }
+  .stat-lbl { color: var(--text-muted); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; }
+  .stat-val.ok { color: var(--ok); }
+  .stat-val.warn { color: var(--warn); }
+
+  .progress-bar-outer { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .progress-bar-inner { height: 100%; background: var(--ok); border-radius: 3px; transition: width .4s ease; }
+
+  /* MAIN */
+  main { max-width: 100%; margin: 0; padding: 16px 20px; }
+
+  /* PHASE BLOCK */
+  .phase-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .phase-header {
+    display: flex;
+    align-items: center;
+    padding: 14px 20px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+    gap: 14px;
+  }
+  .phase-header:hover { background: #f0ede6; }
+  .phase-toggle { font-family: var(--mono); font-size: 12px; color: var(--text-muted); width: 16px; }
+  .phase-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    background: var(--text);
+    color: var(--bg);
+    padding: 2px 7px;
+    border-radius: 2px;
+    letter-spacing: 1px;
+  }
+  .phase-title { font-weight: 600; font-size: 14px; flex: 1; }
+  .phase-subtitle { font-size: 11px; color: var(--text-muted); font-family: var(--mono); }
+  .phase-progress {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 2px 10px;
+    border-radius: 10px;
+    white-space: nowrap;
+  }
+  .phase-progress.done { background: var(--ok-light); color: var(--ok); border-color: #b8dfc8; }
+
+  /* TASK TABLE */
+  .task-table { width: 100%; border-collapse: collapse; }
+  .task-table thead th {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    background: #faf8f4;
+    font-weight: 500;
+  }
+  .task-row {
+    border-bottom: 1px solid var(--border);
+    transition: background .1s;
+  }
+  .task-row:last-child { border-bottom: none; }
+  .task-row:hover { background: #faf8f5; }
+  .task-row.completed { opacity: .65; }
+  .task-row.completed .task-name { text-decoration: line-through; color: var(--text-muted); }
+
+  .task-row td {
+    padding: 8px 10px;
+    vertical-align: middle;
+  }
+
+  /* Columns */
+  .col-check { width: 32px; text-align: center; }
+  .col-id { width: 60px; }
+  .col-task { width: 30%; }
+  .col-sub { width: 70px; }
+  .col-owner { width: 110px; }
+  .col-status { width: 115px; }
+  .col-progress { width: 120px; }
+  .col-deadline { width: 105px; }
+  .col-note { width: auto; }
+  .col-actions { width: 64px; text-align: center; }
+
+  /* Progress slider */
+  .progress-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .progress-pct {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    text-align: right;
+  }
+  .progress-pct.full { color: var(--ok); font-weight: 600; }
+  .progress-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    outline: none;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .progress-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 1px var(--accent);
+    transition: background .15s;
+  }
+  .progress-slider:disabled {
+    cursor: default;
+    opacity: .5;
+  }
+  .progress-slider:disabled::-webkit-slider-thumb {
+    cursor: default;
+    background: var(--border-strong);
+    box-shadow: none;
+  }
+  .progress-slider.done {
+    background: var(--ok);
+  }
+  .progress-slider.done::-webkit-slider-thumb {
+    background: var(--ok);
+    box-shadow: 0 0 0 1px var(--ok);
+  }
+
+  .task-id {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+  .task-name {
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    display: block;
+  }
+  .task-desc {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 2px;
+    font-style: italic;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    display: block;
+  }
+  .task-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--accent);
+    text-decoration: none;
+    margin-top: 3px;
+    padding: 2px 5px;
+    border: 1px solid #c0d8ee;
+    border-radius: 2px;
+    background: var(--accent-light);
+    transition: background .15s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  .task-link:hover { background: #d4e8f5; }
+
+  /* Checkbox */
+  .task-check {
+    width: 18px; height: 18px;
+    border: 2px solid var(--border-strong);
+    border-radius: 3px;
+    background: var(--surface);
+    cursor: pointer;
+    appearance: none;
+    display: block;
+    margin: 0 auto;
+    transition: all .15s;
+    position: relative;
+  }
+  .task-check:checked {
+    background: var(--ok);
+    border-color: var(--ok);
+  }
+  .task-check:checked::after {
+    content: '✓';
+    position: absolute;
+    top: -1px; left: 2px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  /* Select */
+  .task-select {
+    font-family: var(--mono);
+    font-size: 11px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 4px 6px;
+    background: var(--surface);
+    color: var(--text);
+    width: 100%;
+    cursor: pointer;
+  }
+  .task-select:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+
+  /* Status badges */
+  .status-badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .5px;
+    padding: 3px 8px;
+    border-radius: 2px;
+    font-weight: 500;
+  }
+  .status-0 { background: #f0ede6; color: var(--text-muted); border: 1px solid var(--border); }
+  .status-1 { background: var(--warn-light); color: var(--warn); border: 1px solid #e8c4a0; }
+  .status-2 { background: var(--ok-light); color: var(--ok); border: 1px solid #b8dfc8; }
+  .status-3 { background: #eaf0f7; color: #2c5f8a; border: 1px solid #b8cfe0; }
+
+  /* Note field */
+  .note-field {
+    font-family: var(--sans);
+    font-size: 12px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    padding: 4px 6px;
+    background: transparent;
+    color: var(--text);
+    width: 100%;
+    resize: none;
+    min-height: 32px;
+    line-height: 1.4;
+    transition: border .15s, background .15s;
+  }
+  .note-field:hover { border-color: var(--border); background: var(--surface2); }
+  .note-field:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); background: var(--surface); }
+  .note-field::placeholder { color: #c0bbb4; font-style: italic; }
+
+  /* Deadline */
+  .deadline-field {
+    font-family: var(--mono);
+    font-size: 11px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    padding: 4px 6px;
+    background: transparent;
+    color: var(--text);
+    width: 100%;
+    cursor: pointer;
+    transition: border .15s, background .15s;
+  }
+  .deadline-field:hover { border-color: var(--border); background: var(--surface2); }
+  .deadline-field:focus { outline: 2px solid var(--accent); outline-offset: 1px; background: var(--surface); }
+
+  .col-actions { width: 70px; text-align: center; }
+  .row-action { background: none; border: none; cursor: pointer; padding: 4px; color: var(--text-muted); border-radius: 3px; font-size: 14px; }
+  .row-action:hover { background: var(--surface2); color: var(--text); }
+  .row-delete:hover { background: #f5eaea; color: var(--danger); }
+
+  /* PHASE HIDDEN */
+  .phase-body.collapsed { display: none; }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(26,24,20,.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 28px;
+    width: min(520px, 95vw);
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,.15);
+  }
+  .modal-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .modal-title span { font-family: var(--mono); font-size: 11px; color: var(--text-muted); font-weight: 400; }
+  .form-row { margin-bottom: 16px; }
+  .form-label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .form-input {
+    font-family: var(--sans);
+    font-size: 13px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 8px 10px;
+    background: var(--surface);
+    color: var(--text);
+    width: 100%;
+    transition: border .15s;
+  }
+  .form-input:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+  .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px; right: 24px;
+    background: var(--text);
+    color: var(--bg);
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 10px 18px;
+    border-radius: 4px;
+    opacity: 0;
+    transition: opacity .3s;
+    z-index: 2000;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+
+  /* Legislation badge */
+  .leg-badge {
+    font-family: var(--mono);
+    font-size: 9px;
+    background: var(--accent-light);
+    color: var(--accent);
+    border: 1px solid #c0d8ee;
+    padding: 2px 6px;
+    border-radius: 2px;
+    white-space: nowrap;
+    display: inline-block;
+    margin-top: 3px;
+  }
+
+  /* Subtask label */
+  .sub-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 2px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  footer {
+    text-align: center;
+    padding: 24px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+    margin-top: 24px;
+    letter-spacing: .5px;
+  }
+
+  @media (max-width: 900px) {
+    .col-deadline, .col-sub { display: none; }
+    .header { flex-direction: column; }
+    main { padding: 12px; }
+    .toolbar { padding: 10px 16px; }
+    .progress-bar-wrap { padding: 12px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="header-tag">Projektové řízení stavby</div>
+    <div class="header-title">Rekonstrukce a stavební úpravy RD Třebechovice pod Orebem č.p. 381</div>
+    <div class="header-sub">Hradecká č.p. 381, 503 46 Třebechovice pod Orebem &nbsp;·&nbsp; parc. č. st. 541, 1135/4 a 1135/1 &nbsp;·&nbsp; k.ú. Třebechovice pod Orebem [769452]</div>
+  </div>
+  <div class="header-right">
+    <table class="header-meta">
+      <tr><td class="meta-label">Objednatel</td><td class="meta-value">Petr Blaško</td></tr>
+      <tr><td class="meta-label">HIP</td><td class="meta-value">Ing. Petr Pojezdala</td></tr>
+      <tr><td class="meta-label">Vypracoval</td><td class="meta-value">Ing. Vojtěch Poláček</td></tr>
+      <tr><td class="meta-label">Autorizovaná osoba</td><td class="meta-value">Ing. arch. Ivona Poláčková, ČKA 02646</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="toolbar">
+  <div class="toolbar-row">
+    <span class="toolbar-label">Stav:</span>
+    <div class="filter-btns" id="status-filters">
+      <button class="filter-btn active" onclick="filterStatus('all', this)">Vše</button>
+      <button class="filter-btn" onclick="filterStatus('open', this)">Nezahájeno</button>
+      <button class="filter-btn" onclick="filterStatus('in-progress', this)">Probíhá</button>
+      <button class="filter-btn" onclick="filterStatus('done', this)">Dokončeno</button>
+      <button class="filter-btn" onclick="filterStatus('waiting', this)">Čeká se</button>
+    </div>
+  </div>
+  <div class="toolbar-row">
+    <span class="toolbar-label">Osoba:</span>
+    <div class="filter-btns" id="owner-filters">
+      <button class="filter-btn active" onclick="filterOwner('all', this)">Všichni</button>
+      <button class="filter-btn" onclick="filterOwner('Petr', this)">Petr</button>
+      <button class="filter-btn" onclick="filterOwner('Vojtěch', this)">Vojtěch</button>
+      <button class="filter-btn" onclick="filterOwner('Karel', this)">Karel</button>
+      <button class="filter-btn" onclick="filterOwner('Marek', this)">Marek</button>
+      <button class="filter-btn" onclick="filterOwner('Extern', this)">Extern</button>
+    </div>
+  </div>
+  <div class="toolbar-row">
+    <span class="toolbar-label"></span>
+    <button class="btn btn-primary" onclick="openAddModal()">+ Přidat úkol</button>
+    <div class="separator"></div>
+    <button class="btn" onclick="exportData()">⬇ Export JSON</button>
+    <button class="btn" onclick="triggerImport()">⬆ Import JSON</button>
+    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+    <div class="separator"></div>
+    <button class="btn btn-ok" id="btn-save" onclick="saveAll()">💾 Uložit</button>
+  </div>
+</div>
+
+<div class="progress-bar-wrap">
+  <div class="progress-stats">
+    <div class="stat"><div class="stat-val" id="stat-total">–</div><div class="stat-lbl">Celkem úkolů</div></div>
+    <div class="stat"><div class="stat-val ok" id="stat-done">–</div><div class="stat-lbl">Dokončeno</div></div>
+    <div class="stat"><div class="stat-val warn" id="stat-progress">–</div><div class="stat-lbl">Probíhá</div></div>
+    <div class="stat"><div class="stat-val" id="stat-pct" style="color:var(--accent)">–</div><div class="stat-lbl">Splněno</div></div>
+  </div>
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+</div>
+
+<main id="main-content"></main>
+
+<footer>Projekt: č.p. 381 Třebechovice pod Orebem · Dokumentace dle vyhl. č. 131/2024 Sb. · Zákon č. 283/2021 Sb. · Verze 1.0</footer>
+
+<!-- ADD/EDIT MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-title">Úkol <span id="modal-subtitle">Přidat nový</span></div>
+    <input type="hidden" id="edit-id">
+    <div class="form-row">
+      <label class="form-label">Název úkolu *</label>
+      <input class="form-input" id="f-name" type="text" placeholder="Název úkolu...">
+    </div>
+    <div class="form-row">
+      <label class="form-label">Popis / legislativní základ</label>
+      <input class="form-input" id="f-desc" type="text" placeholder="Popis nebo odkaz na legislativu...">
+    </div>
+    <div class="form-row">
+      <label class="form-label">Fáze projektu</label>
+      <select class="form-input" id="f-phase">
+        <option value="0">1 — Přípravná fáze</option>
+        <option value="1">2 — Projektová dokumentace (PD)</option>
+        <option value="2">3 — Inženýrská činnost</option>
+        <option value="3">4 — Povolení stavby</option>
+        <option value="4">5 — Realizace</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label class="form-label">Odpovědná osoba</label>
+      <select class="form-input" id="f-owner">
+        <option value="">— Nepřiřazeno —</option>
+        <option value="Petr">Petr (HIP)</option>
+        <option value="Vojtěch">Vojtěch (vypracoval)</option>
+        <option value="Karel">Karel</option>
+        <option value="Marek">Marek</option>
+        <option value="Extern">Externí subjekt</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label class="form-label">Stav</label>
+      <select class="form-input" id="f-status">
+        <option value="0">Nezahájeno</option>
+        <option value="1">Probíhá</option>
+        <option value="2">Dokončeno</option>
+        <option value="3">Čeká se</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label class="form-label">Termín</label>
+      <input class="form-input" id="f-deadline" type="date">
+    </div>
+    <div class="form-row">
+      <label class="form-label">Odkaz na dokument (Google Disk)</label>
+      <input class="form-input" id="f-url" type="url" placeholder="https://drive.google.com/...">
+    </div>
+    <div class="form-row">
+      <label class="form-label">Poznámka</label>
+      <textarea class="form-input" id="f-note" rows="3" placeholder="Poznámky, podmínky, výsledky jednání..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal()">Zrušit</button>
+      <button class="btn btn-primary" onclick="saveModal()">Uložit úkol</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const PHASES = [
+  {
+    id: 'phase-0',
+    num: '01',
+    title: 'Přípravná fáze',
+    subtitle: 'Podklady, smlouvy, zaměření',
+    tasks: []
+  },
+  {
+    id: 'phase-1',
+    num: '02',
+    title: 'Projektová dokumentace',
+    subtitle: 'Vyhl. č. 131/2024 Sb. — příl. č. 1',
+    tasks: []
+  },
+  {
+    id: 'phase-2',
+    num: '03',
+    title: 'Inženýrská činnost',
+    subtitle: 'Správci sítí, dotčené orgány, § 184 zák. č. 283/2021 Sb.',
+    tasks: []
+  },
+  {
+    id: 'phase-3',
+    num: '04',
+    title: 'Povolení stavby',
+    subtitle: 'Zákon č. 283/2021 Sb. — § 179 a násl.',
+    tasks: []
+  },
+  {
+    id: 'phase-4',
+    num: '05',
+    title: 'Realizace stavby',
+    subtitle: 'Stavební deník, kontroly, kolaudace',
+    tasks: []
+  }
+];
+
+const DEFAULT_TASKS = [
+  // Phase 0
+  // Phase 0 — Přípravná fáze
+  { id: 'T-001', phase: 0, name: 'Podpis smlouvy o dílo', desc: 'Smlouva o dílo — zpracování PD a inženýrská činnost', sub: 'Smluvní', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-002', phase: 0, name: 'Zajištění plné moci', desc: 'Plná moc pro podání žádosti na stavební úřad — § 33 správní řád', sub: 'Právní', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-003', phase: 0, name: 'Mračno bodů — zpracování podkladu', desc: 'Zpracování mračna bodů jako podkladu pro výkresovou část', sub: 'Podklad', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-004', phase: 0, name: 'Zaměření stávajícího stavu', desc: 'Stavební zaměření objektu č.p. 381, Hradecká, Třebechovice pod Orebem', sub: 'Podklad', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-005', phase: 0, name: 'Shromáždění podkladů', desc: 'Katastrální mapa, LV, RÚIAN, vyjádření inž. sítí pro situaci', sub: 'Podklad', owner: 'Petr', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-006', phase: 0, name: 'Obhlídka staveniště', desc: 'Fotografická dokumentace, soupis závad a zadání pro PD', sub: 'Příprava', owner: 'Petr', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+
+  // Phase 1 — PD (výkresová část stavební — dle zadání)
+  { id: 'T-010', phase: 1, name: 'A — Průvodní list', desc: 'Vyhl. č. 131/2024 Sb., příl. 1, část A', sub: 'PD', owner: 'Petr', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-011', phase: 1, name: 'B — Souhrnná technická zpráva', desc: 'Vyhl. č. 131/2024 Sb., příl. 1, část B — zpracuje HIP', sub: 'PD', owner: 'Petr', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-012', phase: 1, name: 'C.1 — Situační výkres širších vztahů 1:8000', desc: 'Umístění stavby v území, napojení na dopravní infrastrukturu', sub: 'PD', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-013', phase: 1, name: 'C.2 — Katastrální situační výkres 1:1000', desc: 'Zakreslení stavby do katastrální mapy — parc. č. st. 541, 1135/4, 1135/1', sub: 'PD', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-014', phase: 1, name: 'C.3 — Koordinační situační výkres 1:200', desc: 'Inž. sítě orientačně, chodník ke vstupu, stopa objektu vč. zateplení ETICS', sub: 'PD', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-015', phase: 1, name: 'C.4 — Situace souhlas se stavbou 1:200', desc: 'Příl. k žádosti o povolení — § 185 zák. č. 283/2021 Sb.', sub: 'PD', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-020', phase: 1, name: 'D.1.1 — Architektonicko-stavební řešení (TZ)', desc: 'Technická zpráva ASŘ — zpracuje HIP, Ing. arch. Poláčková', sub: 'PD', owner: 'Petr', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-021', phase: 1, name: 'D.1.1 — SS+BP Půdorys 1.NP 1:50', desc: 'Stávající stav + bourací práce — bourací práce zeleně', sub: 'PD', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-022', phase: 1, name: 'D.1.1 — SS+BP Půdorys podkroví 1:50', desc: 'Stávající stav + bourací práce podkroví — bourací práce zeleně', sub: 'PD', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-023', phase: 1, name: 'D.1.1 — SS+BP Půdorys krovu 1:50', desc: 'Stávající krov — kompletní odstranění střešní konstrukce', sub: 'PD', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-024', phase: 1, name: 'D.1.1 — SS+BP Půdorys střechy 1:50', desc: 'Stávající střešní plášť — kompletní odstranění', sub: 'PD', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-025', phase: 1, name: 'D.1.1 — SS+BP Řez A-A\' 1:50', desc: 'Charakteristický svislý řez — stávající stav + bourací práce', sub: 'PD', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-026', phase: 1, name: 'D.1.1 — SS+BP Řez B-B\' 1:50', desc: 'Druhý charakteristický řez — stávající stav + bourací práce', sub: 'PD', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-027', phase: 1, name: 'D.1.1 — SS+BP Pohled severní 1:50', desc: 'Pohled S — stávající stav', sub: 'PD', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-028', phase: 1, name: 'D.1.1 — SS+BP Pohled jižní 1:50', desc: 'Pohled J — stávající stav', sub: 'PD', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-029', phase: 1, name: 'D.1.1 — SS+BP Pohled východní 1:50', desc: 'Pohled V — stávající stav', sub: 'PD', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-030', phase: 1, name: 'D.1.1 — SS+BP Pohled západní 1:50', desc: 'Pohled Z — stávající stav', sub: 'PD', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-031', phase: 1, name: 'D.1.1 — SS+BP Výpis skladeb stávajících konstrukcí', desc: 'Stávající skladby — podklady pro bourací práce', sub: 'PD', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-040', phase: 1, name: 'D.1.1 — NS Půdorys 1.NP 1:50', desc: 'Nový stav — nové konstrukce červeně, ETICS 200 mm, nové podlahové souvrství', sub: 'PD', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-041', phase: 1, name: 'D.1.1 — NS Půdorys podkroví 1:50', desc: 'Nový stav — obytné podkroví, světlá výška min. 2,3 m nad >50 % plochy', sub: 'PD', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-042', phase: 1, name: 'D.1.1 — NS Půdorys krovu 1:50', desc: 'Nová sedlová střecha — sklon podobný stávajícímu, lehce zvýšená', sub: 'PD', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-043', phase: 1, name: 'D.1.1 — NS Půdorys střechy 1:50', desc: 'Nový střešní plášť — krytina, latě, kontralatě, pojistná HI', sub: 'PD', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-044', phase: 1, name: 'D.1.1 — NS Řez A-A\' 1:50', desc: 'Charakteristický svislý řez nový stav — skladba střechy, podlah, ETICS', sub: 'PD', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-045', phase: 1, name: 'D.1.1 — NS Řez B-B\' 1:50', desc: 'Druhý charakteristický řez nový stav', sub: 'PD', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-046', phase: 1, name: 'D.1.1 — NS Pohled severní 1:50', desc: 'Pohled S — nový stav po rekonstrukci vč. zateplení', sub: 'PD', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-047', phase: 1, name: 'D.1.1 — NS Pohled jižní 1:50', desc: 'Pohled J — nový stav po rekonstrukci vč. zateplení', sub: 'PD', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-048', phase: 1, name: 'D.1.1 — NS Pohled východní 1:50', desc: 'Pohled V — nový stav po rekonstrukci vč. zateplení', sub: 'PD', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-049', phase: 1, name: 'D.1.1 — NS Pohled západní 1:50', desc: 'Pohled Z — nový stav po rekonstrukci vč. zateplení', sub: 'PD', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-050', phase: 1, name: 'D.1.1 — NS Výpis skladeb nových konstrukcí', desc: 'ETICS 200 mm, podlahové EPS min. 120 mm, skladba střechy — U-hodnoty, ČSN 73 0540', sub: 'PD', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-051', phase: 1, name: 'D.1.2 — TZB (TZ + schémata) — zpracuje HIP', desc: 'Nový kotel na tuhá paliva, TZB koncepce — zpracuje Ing. Pojezdala', sub: 'PD', owner: 'Petr', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-052', phase: 1, name: 'D.2 — Stavebně konstrukční řešení (TZ + statika)', desc: 'D.2.1 TZ + D.2.2 Základní statický výpočet — nová střešní konstrukce', sub: 'PD', owner: 'Petr', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-053', phase: 1, name: 'D.3 — Požárně bezpečnostní řešení (PBŘ)', desc: 'Dle ČSN 73 0833, vyhl. č. 246/2001 Sb. — rodinný dům OB1', sub: 'PD', owner: 'Petr', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-054', phase: 1, name: 'Interní kontrola kompletnosti PD', desc: 'Kontrola proti příl. 1 vyhl. č. 131/2024 Sb. — před odesláním na SÚ', sub: 'Kontrola', owner: 'Petr', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+
+  // Phase 2 — Inženýrská činnost
+  { id: 'T-060', phase: 2, name: 'Vyjádření — ČEZ (el. síť)', desc: 'Vyjádření správce el. sítě k existenci sítí v dotčeném území', sub: 'Sítě', owner: 'Petr', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-061', phase: 2, name: 'Vyjádření — GasNet (plynovod)', desc: 'Orientační zakreslení do situace', sub: 'Sítě', owner: 'Petr', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-062', phase: 2, name: 'Vyjádření — VaK (vodovod a kanalizace)', desc: 'Orientační zakreslení do situace', sub: 'Sítě', owner: 'Petr', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-063', phase: 2, name: 'Vyjádření — O2 / telekomunikace', desc: 'Orientační zakreslení do situace', sub: 'Sítě', owner: 'Petr', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-064', phase: 2, name: 'Závazné stanovisko — OŽP', desc: 'Dle charakteru zásahu do přírody a krajiny', sub: 'DO', owner: 'Petr', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-065', phase: 2, name: 'Závazné stanovisko — HZS (požární ochrana)', desc: 'Dle § 31 zák. č. 133/1985 Sb. — PBŘ předložit HZS', sub: 'DO', owner: 'Petr', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-066', phase: 2, name: 'Závazné stanovisko — NPÚ / KPÚ', desc: 'Ověřit, zda objekt není v PAMP nebo v blízkosti KP', sub: 'DO', owner: 'Petr', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-067', phase: 2, name: 'Závazné stanovisko — SÚ (doprava)', desc: 'Správce místních komunikací — stávající povolený sjezd zachován', sub: 'DO', owner: 'Petr', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-068', phase: 2, name: 'Souhlas vlastníků sousedních pozemků', desc: '§ 185 odst. 2 zák. č. 283/2021 Sb. — souhlas sousedů', sub: 'Souhlas', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-069', phase: 2, name: 'Energetický průkaz budovy (PENB)', desc: 'Dle zák. č. 406/2000 Sb. — při rekonstrukci povinnost PENB', sub: 'Energetika', owner: 'Petr', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+
+  // Phase 3 — Povolení stavby
+  { id: 'T-070', phase: 3, name: 'Kompletace žádosti o povolení stavby', desc: '§ 184 a násl. zák. č. 283/2021 Sb. — formulář pro SÚ Třebechovice / Hradec Králové', sub: 'Žádost', owner: 'Petr', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-071', phase: 3, name: 'Podání žádosti na stavební úřad', desc: 'Podání na příslušný SÚ na základě plné moci', sub: 'Žádost', owner: 'Petr', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-072', phase: 3, name: 'Doložení dokladů k žádosti', desc: 'PD, vyjádření správců sítí, ZS dotčených orgánů, doklad vlastnictví', sub: 'Doklady', owner: 'Petr', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-073', phase: 3, name: 'Komunikace se SÚ — výzvy k doplnění', desc: 'Lhůta pro vyjádření k výzvě SÚ dle § 88 správního řádu', sub: 'Řízení', owner: 'Petr', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-074', phase: 3, name: 'Vydání povolení stavby', desc: 'Pravomocné povolení — § 186 zák. č. 283/2021 Sb.', sub: 'Výsledek', owner: 'Extern', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+
+  // Phase 4 — Realizace
+  { id: 'T-080', phase: 4, name: 'Výběr zhotovitele stavby', desc: 'Poptávkové řízení, výběr dodavatele', sub: 'Příprava', owner: 'Vojtěch', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-081', phase: 4, name: 'Zahájení stavby — oznámení SÚ', desc: '§ 192 zák. č. 283/2021 Sb. — oznámení o zahájení min. 5 dnů předem', sub: 'Realizace', owner: 'Petr', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-082', phase: 4, name: 'Vedení stavebního deníku', desc: '§ 215 zák. č. 283/2021 Sb. — povinnost vést SD', sub: 'Realizace', owner: 'Extern', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-083', phase: 4, name: 'Autorský dozor projektanta', desc: 'Kontrola souladu realizace s PD', sub: 'Dozor', owner: 'Petr', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-084', phase: 4, name: 'Kontrolní prohlídky SÚ', desc: '§ 221 zák. č. 283/2021 Sb. — kontrolní prohlídky stavby', sub: 'Kontrola', owner: 'Extern', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+  { id: 'T-085', phase: 4, name: 'Kolaudace / oznámení o užívání stavby', desc: '§ 229 a násl. zák. č. 283/2021 Sb.', sub: 'Závěr', owner: 'Petr', status: 0, deadline: '', note: '', completed: false, url: '', progress: 0 },
+];
+
+const STATUS_LABELS = ['Nezahájeno', 'Probíhá', 'Dokončeno', 'Čeká se'];
+const OWNERS = ['', 'Petr', 'Vojtěch', 'Karel', 'Marek', 'Extern'];
+
+// ─────────────────────────────────────────────
+// JSONBIN KONFIGURACE — doplňte své údaje níže
+// ─────────────────────────────────────────────
+const JSONBIN_API_KEY  = '$2a$10$hJNaV8pH.6L7i4bd55367OMNWSbb3Sr8fSnrq7TfMd3F16AzObeKu';
+const JSONBIN_BIN_ID   = '69f79684856a682189a0b5d0';
+const JSONBIN_URL      = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
+// ─────────────────────────────────────────────
+
+let tasks = [];
+let collapsed = {};
+let isSaving = false;
+
+function setLoading(on, msg) {
+  const btn = document.getElementById('btn-save');
+  if (btn) btn.textContent = on ? (msg || '⏳ Načítám…') : '💾 Uložit';
+  if (btn) btn.disabled = on;
+}
+
+async function loadData() {
+  setLoading(true, '⏳ Načítám…');
+  try {
+    const res = await fetch(JSONBIN_URL + '/latest', {
+      headers: { 'X-Master-Key': JSONBIN_API_KEY }
+    });
+    if (!res.ok) throw new Error('Chyba načtení');
+    const json = await res.json();
+    const d = json.record;
+    // Pokud je bin prázdný nebo tasks chybí/je prázdné — nahraj výchozí data
+    if (!d || !d.tasks || d.tasks.length === 0) {
+      tasks     = JSON.parse(JSON.stringify(DEFAULT_TASKS));
+      collapsed = {};
+      await saveAll();
+    } else {
+      tasks     = d.tasks;
+      collapsed = d.collapsed || {};
+      // Migrace — oprava starých dat
+      const t001 = tasks.find(t => t.id === 'T-001');
+      if (t001 && (t001.desc.includes('179') || t001.desc.includes('260226') || t001.desc.includes('Kč'))) {
+        t001.desc = 'Smlouva o dílo — zpracování PD a inženýrská činnost';
+      }
+      tasks.forEach(t => { if (t.url === undefined) t.url = ''; });
+    }
+  } catch (e) {
+    // Záloha: načti z localStorage pokud JSONBin selže
+    const saved = localStorage.getItem('project-trebechovice-381');
+    if (saved) {
+      try {
+        const d = JSON.parse(saved);
+        tasks     = d.tasks     || JSON.parse(JSON.stringify(DEFAULT_TASKS));
+        collapsed = d.collapsed || {};
+        tasks.forEach(t => { if (t.url === undefined) t.url = ''; });
+        toast('⚠ Offline záloha — JSONBin nedostupný');
+      } catch { tasks = JSON.parse(JSON.stringify(DEFAULT_TASKS)); collapsed = {}; }
+    } else {
+      tasks = JSON.parse(JSON.stringify(DEFAULT_TASKS));
+      collapsed = {};
+    }
+  }
+  setLoading(false);
+}
+
+async function saveAll() {
+  if (isSaving) return;
+  isSaving = true;
+  setLoading(true, '⏳ Ukládám…');
+  // Lokální záloha vždy
+  localStorage.setItem('project-trebechovice-381', JSON.stringify({ tasks, collapsed }));
+  try {
+    const res = await fetch(JSONBIN_URL, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': JSONBIN_API_KEY
+      },
+      body: JSON.stringify({ tasks, collapsed })
+    });
+    if (!res.ok) throw new Error('Chyba uložení');
+    toast('Uloženo ✓ — sdíleno s týmem');
+  } catch (e) {
+    toast('⚠ Uloženo lokálně — JSONBin nedostupný');
+  }
+  isSaving = false;
+  setLoading(false);
+}
+
+async function resetData() {
+  if (!confirm('Opravdu chcete resetovat data na výchozí stav? Všechny změny budou ztraceny.')) return;
+  tasks = JSON.parse(JSON.stringify(DEFAULT_TASKS));
+  collapsed = {};
+  await saveAll();
+  render();
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+function getTasksForPhase(phaseIdx) {
+  return tasks.filter(t => t.phase === phaseIdx);
+}
+
+function updateStats() {
+  const total = tasks.length;
+  const done = tasks.filter(t => t.status == 2 || t.completed).length;
+  const inprog = tasks.filter(t => t.status == 1).length;
+  const pct = total ? Math.round(done / total * 100) : 0;
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-done').textContent = done;
+  document.getElementById('stat-progress').textContent = inprog;
+  document.getElementById('stat-pct').textContent = pct + '%';
+  document.getElementById('progress-bar').style.width = pct + '%';
+}
+
+function render() {
+  const container = document.getElementById('main-content');
+  container.innerHTML = '';
+  PHASES.forEach((phase, pi) => {
+    const phaseTasks = getTasksForPhase(pi);
+    const doneCnt = phaseTasks.filter(t => t.status == 2 || t.completed).length;
+
+    // filter by status
+    let visible = phaseTasks;
+    if (filterMode === 'open') visible = visible.filter(t => t.status == 0);
+    else if (filterMode === 'in-progress') visible = visible.filter(t => t.status == 1);
+    else if (filterMode === 'done') visible = visible.filter(t => t.status == 2 || t.completed);
+    else if (filterMode === 'waiting') visible = visible.filter(t => t.status == 3);
+    // filter by owner
+    if (filterOwnerMode !== 'all') visible = visible.filter(t => t.owner === filterOwnerMode);
+
+    const block = document.createElement('div');
+    block.className = 'phase-block';
+    block.id = 'block-' + pi;
+
+    const doneClass = doneCnt === phaseTasks.length && phaseTasks.length > 0 ? ' done' : '';
+    const isCollapsed = collapsed[pi];
+
+    block.innerHTML = `
+      <div class="phase-header" onclick="togglePhase(${pi})">
+        <span class="phase-toggle">${isCollapsed ? '▶' : '▼'}</span>
+        <span class="phase-num">${phase.num}</span>
+        <span class="phase-title">${phase.title}</span>
+        <span class="phase-subtitle">${phase.subtitle}</span>
+        <span class="phase-progress${doneClass}">${doneCnt}/${phaseTasks.length}</span>
+      </div>
+      <div class="phase-body${isCollapsed ? ' collapsed' : ''}" id="body-${pi}">
+        <table class="task-table">
+          <thead>
+            <tr>
+              <th class="col-check">✓</th>
+              <th class="col-id">ID</th>
+              <th class="col-task">Úkol / Dokument</th>
+              <th class="col-sub">Typ</th>
+              <th class="col-owner">Odpovědný</th>
+              <th class="col-status">Stav</th>
+              <th class="col-progress">Průběh</th>
+              <th class="col-deadline">Termín</th>
+              <th class="col-note">Poznámka</th>
+              <th class="col-actions"></th>
+            </tr>
+          </thead>
+          <tbody id="tbody-${pi}">
+          </tbody>
+        </table>
+      </div>
+    `;
+    container.appendChild(block);
+
+    const tbody = document.getElementById('tbody-' + pi);
+    visible.forEach(task => {
+      const tr = document.createElement('tr');
+      tr.className = 'task-row' + (task.completed || task.status == 2 ? ' completed' : '');
+      tr.id = 'row-' + task.id;
+      tr.innerHTML = `
+        <td class="col-check"><input type="checkbox" class="task-check" ${task.completed ? 'checked' : ''} onchange="toggleComplete('${task.id}', this)"></td>
+        <td class="col-id"><span class="task-id">${task.id}</span></td>
+        <td class="col-task">
+          <div class="task-name">${task.name}</div>
+          ${task.desc ? `<div class="task-desc">${task.desc}</div>` : ''}
+          ${task.url ? `<a class="task-link" href="${task.url}" target="_blank" rel="noopener">🔗 Otevřít dokument</a>` : ''}
+        </td>
+        <td class="col-sub"><span class="sub-label">${task.sub || ''}</span></td>
+        <td class="col-owner">
+          <select class="task-select" onchange="setOwner('${task.id}', this.value)">
+            ${OWNERS.map(o => `<option value="${o}" ${task.owner === o ? 'selected' : ''}>${o || '—'}</option>`).join('')}
+          </select>
+        </td>
+        <td class="col-status">
+          <select class="task-select" onchange="setStatus('${task.id}', this.value)">
+            ${STATUS_LABELS.map((l,i) => `<option value="${i}" ${task.status == i ? 'selected' : ''}>${l}</option>`).join('')}
+          </select>
+        </td>
+        <td class="col-progress">
+          ${renderSlider(task)}
+        </td>
+        <td class="col-deadline">
+          <input type="date" class="deadline-field" value="${task.deadline || ''}" onchange="setDeadline('${task.id}', this.value)">
+        </td>
+        <td class="col-note">
+          <textarea class="note-field" rows="1" placeholder="Doplnit poznámku..." onchange="setNote('${task.id}', this.value)">${task.note || ''}</textarea>
+        </td>
+        <td class="col-actions">
+          <button class="row-action" onclick="openEditModal('${task.id}')" title="Upravit">✎</button>
+          <button class="row-action row-delete" onclick="deleteTask('${task.id}')" title="Smazat">✕</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    if (visible.length === 0) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td colspan="10" style="padding:16px 20px;font-family:var(--mono);font-size:11px;color:var(--text-muted);text-align:center;">Žádné úkoly v tomto filtru</td>`;
+      tbody.appendChild(tr);
+    }
+  });
+
+  updateStats();
+}
+
+function togglePhase(pi) {
+  collapsed[pi] = !collapsed[pi];
+  saveAll();
+  render();
+}
+
+function toggleComplete(id, el) {
+  const t = tasks.find(t => t.id === id);
+  if (!t) return;
+  t.completed = el.checked;
+  if (t.completed) { t.status = 2; t.progress = 100; }
+  else { t.status = 0; t.progress = 0; }
+  saveAll();
+  render();
+}
+
+function setOwner(id, val) {
+  const t = tasks.find(t => t.id === id);
+  if (t) { t.owner = val; saveAll(); }
+}
+
+function setStatus(id, val) {
+  const t = tasks.find(t => t.id === id);
+  if (t) {
+    t.status = parseInt(val);
+    t.completed = t.status == 2;
+    if (t.status == 0) t.progress = 0;
+    if (t.status == 2) t.progress = 100;
+    saveAll();
+    render();
+  }
+}
+
+function setDeadline(id, val) {
+  const t = tasks.find(t => t.id === id);
+  if (t) { t.deadline = val; saveAll(); }
+}
+
+function deleteTask(id) {
+  const t = tasks.find(t => t.id === id);
+  if (!t) return;
+  if (!confirm(`Smazat úkol „${t.name}"?`)) return;
+  tasks = tasks.filter(t => t.id !== id);
+  saveAll();
+  render();
+  toast('Úkol smazán ✓');
+}
+
+
+function setNote(id, val) {
+  const t = tasks.find(t => t.id === id);
+  if (t) { t.note = val; saveAll(); }
+}
+
+function renderSlider(task) {
+  // status: 0=Nezahájeno, 1=Probíhá, 2=Dokončeno, 3=Čeká se
+  const pct = task.progress || 0;
+  const disabled = (task.status == 0) ? 'disabled' : '';
+  const doneClass = task.status == 2 ? 'done' : '';
+  const pctClass = task.status == 2 ? 'full' : '';
+  return `
+    <div class="progress-wrap">
+      <div class="progress-pct ${pctClass}">${pct}&nbsp;%</div>
+      <input type="range" class="progress-slider ${doneClass}" min="0" max="100" step="5"
+        value="${pct}" ${disabled}
+        oninput="updateSliderDisplay(this, '${task.id}')"
+        onchange="setProgress('${task.id}', this.value)">
+    </div>`;
+}
+
+function updateSliderDisplay(el, id) {
+  const pct = el.value;
+  const wrap = el.closest('.progress-wrap');
+  const label = wrap.querySelector('.progress-pct');
+  label.textContent = pct + '\u00a0%';
+  // live color fill on track
+  el.style.background = `linear-gradient(to right, var(--accent) ${pct}%, var(--border) ${pct}%)`;
+}
+
+function setProgress(id, val) {
+  const t = tasks.find(t => t.id === id);
+  if (t) { t.progress = parseInt(val); saveAll(); }
+}
+
+
+
+// MODAL
+function openAddModal() {
+  document.getElementById('modal-subtitle').textContent = 'Přidat nový';
+  document.getElementById('edit-id').value = '';
+  ['f-name','f-desc','f-note','f-url'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-phase').value = 0;
+  document.getElementById('f-owner').value = '';
+  document.getElementById('f-status').value = 0;
+  document.getElementById('f-deadline').value = '';
+  document.getElementById('modal').classList.add('open');
+}
+
+function openEditModal(id) {
+  const t = tasks.find(t => t.id === id);
+  if (!t) return;
+  document.getElementById('modal-subtitle').textContent = 'Upravit — ' + id;
+  document.getElementById('edit-id').value = id;
+  document.getElementById('f-name').value = t.name;
+  document.getElementById('f-desc').value = t.desc || '';
+  document.getElementById('f-phase').value = t.phase;
+  document.getElementById('f-owner').value = t.owner || '';
+  document.getElementById('f-status').value = t.status;
+  document.getElementById('f-deadline').value = t.deadline || '';
+  document.getElementById('f-note').value = t.note || '';
+  document.getElementById('f-url').value = t.url || '';
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+}
+
+function saveModal() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { alert('Vyplňte název úkolu.'); return; }
+  const eid = document.getElementById('edit-id').value;
+  if (eid) {
+    const t = tasks.find(t => t.id === eid);
+    if (t) {
+      t.name = name;
+      t.desc = document.getElementById('f-desc').value.trim();
+      t.phase = parseInt(document.getElementById('f-phase').value);
+      t.owner = document.getElementById('f-owner').value;
+      t.status = parseInt(document.getElementById('f-status').value);
+      t.deadline = document.getElementById('f-deadline').value;
+      t.note = document.getElementById('f-note').value.trim();
+      t.url = document.getElementById('f-url').value.trim();
+      t.completed = t.status == 2;
+    }
+  } else {
+    const newId = 'T-' + String(Date.now()).slice(-5);
+    tasks.push({
+      id: newId,
+      phase: parseInt(document.getElementById('f-phase').value),
+      name,
+      desc: document.getElementById('f-desc').value.trim(),
+      sub: 'Vlastní',
+      owner: document.getElementById('f-owner').value,
+      status: parseInt(document.getElementById('f-status').value),
+      deadline: document.getElementById('f-deadline').value,
+      note: document.getElementById('f-note').value.trim(),
+      url: document.getElementById('f-url').value.trim(),
+      completed: parseInt(document.getElementById('f-status').value) == 2
+    });
+  }
+  closeModal();
+  saveAll();
+  render();
+}
+
+let filterMode = 'all';
+let filterOwnerMode = 'all';
+
+function filterStatus(mode, btn) {
+  filterMode = mode;
+  document.querySelectorAll('#status-filters .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function filterOwner(mode, btn) {
+  filterOwnerMode = mode;
+  document.querySelectorAll('#owner-filters .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+// Filter
+function filterTasks(mode, btn) {
+  filterStatus(mode, btn);
+}
+
+// Export/Import
+function exportData() {
+  const json = JSON.stringify({ tasks, collapsed, exportDate: new Date().toISOString() }, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'projekt_340_vamberk_' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  toast('Export dokončen ✓');
+}
+
+function triggerImport() {
+  document.getElementById('importFile').click();
+}
+
+function importData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    try {
+      const d = JSON.parse(ev.target.result);
+      if (d.tasks) {
+        tasks = d.tasks;
+        collapsed = d.collapsed || {};
+        saveAll();
+        render();
+        toast('Import dokončen ✓');
+      }
+    } catch { toast('Chyba při importu!'); }
+  };
+  r.readAsText(file);
+  e.target.value = '';
+}
+
+// Close modal on overlay click
+document.getElementById('modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// Init
+loadData().then(() => render());
+</script>
+</body>
+</html>
